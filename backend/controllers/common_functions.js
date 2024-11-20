@@ -26,3 +26,31 @@ export const authenticate = async(username,password)=>{
         console.error(error.message);
     }
 };
+
+export const validateCode = async(value,owner,password,redirect)=>{
+    if(!value || !owner || !password || !redirect){
+        return {error:true,message:"please enter all credentials"}
+    }
+    else if(value>999999 || value<0){
+        return {error:true,message:"enter value b/w 0 and 999999"}
+    }
+    return {error:false}
+}
+
+export const validateUser = async(username,password)=>{
+    if(!username || !password){
+        return {error:true,message:"please enter all required fields"}
+    }
+    return {error:false}
+
+}
+
+export const validateChgPass = async(username,password,new_pass)=>{
+    if(!username || !password ||!new_pass){
+        return {error:true,message:"please enter all required fields"}
+    }
+    else if(password == new_pass){
+        return {error:true,message:"new and old pass cant be same"}
+    }
+    return {error:false}
+}

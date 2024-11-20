@@ -1,6 +1,6 @@
 import Code from '../models/code.model.js';
 
-import { authenticate, find_docs } from './common_functions.js';
+import { authenticate, find_docs, validateCode } from './common_functions.js';
 
 export const getCodes = async(req,res)=>{
     let input = req.body;
@@ -9,31 +9,28 @@ export const getCodes = async(req,res)=>{
 }
 
 export const assignCode = async(req,res)=>{
-    let input = req.body;
+    let {value,owner,password,redirect} = req.body;
     
-    if(!input.value || !input.owner || !input.password || !input.redirect){
-        return res.status(400).json({success:false,message:"please enter all fields"});
-    }
+    let validation = await validateCode(value,owner,password,redirect);
 
-    if(input.value>999999 || input.value<0){
-        return res.status(400).json({success:false,message:"value should be b/w 0 and 999999"});
+    if(validation.error){
+        return res.status(400).json({success:false,message:validation.message});
     }
     
-    
-    const code_exists = await find_docs({value:input.value},Code);
+    const code_exists = await find_docs({value:value},Code);
     if(code_exists[0]){
         return res.status(409).json({success:false,message:"value is already taken"});
     }
     
     
-    const authenticated = await authenticate(input.owner,input.password);
+    const authenticated = await authenticate(owner,password);
     if(!authenticated){
         return res.status(401).json({success:false,message:"wrong username/password"});
     }
 
 
     try {
-        const saved_code = await Code.create({owner:input.owner,value:input.value,redirect:input.redirect});
+        const saved_code = await Code.create({owner:owner,value:value,redirect:redirect});
         res.status(201).json({success:true,code:saved_code});
     } catch (error) {
         console.error(error.message);

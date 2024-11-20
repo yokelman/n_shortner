@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
 // common functions
-import { find_docs, authenticate } from './common_functions.js';
+import { find_docs, authenticate, validateUser, validateChgPass } from './common_functions.js';
 
 // read ENVIRONMENT variables
 dotenv.config();
@@ -23,16 +23,16 @@ export const getUsers = async(req,res)=>{
 };
 
 export const registerUser = async (req,res)=>{
-    let input = req.body; // set "user" = input given
+    let {username,password} = req.body; // set "user" = input given
 
-    // check if user has entered all REQUIRED fields
-    if (!input.username || !input.password) {
-        return res.status(400).json({ success: false, message: "please enter all credentials => username,password" });
+    // validate input
+    let validation = await validateUser(username,password);
+    if(validation.error){
+        return res.status(400).json({success:false,message:validation.message});
     }
 
     // checking if user already EXISTS
-    const exists = await find_docs({username: input.username},User);
-
+    const exists = await find_docs({username: username},User);
     // if user already exists, send error for "conflitct"
     if (exists[0]) {
         res.status(409).json({ success: false, message: "user already exists" });
@@ -41,8 +41,8 @@ export const registerUser = async (req,res)=>{
     else {
         try {
             // success, save user
-            input.password = await bcrypt.hash(input.password, salt); //HASHING PASSWORD
-            const saved_user = await User.create(input);
+            password = await bcrypt.hash(password, salt); //HASHING PASSWORD
+            const saved_user = await User.create({username:username,password:password});
 
             res.status(201).json({ success: true, data: saved_user });
         } catch (error) {
@@ -54,16 +54,15 @@ export const registerUser = async (req,res)=>{
 };
 
 export const loginUser = async (req, res) => {
-    let input = req.body; // set "user" = input given
+    let {password,username} = req.body; // set "user" = input given
 
-    // check if user has entered all REQUIRED fields
-    if (!input.username || !input.password) {
-        // return an error response for bad request
-        return res.status(400).json({ success: false, message: "please enter all credentials => username,password" });
+    // validate input
+    let validation = await validateUser(username,password);
+    if(validation.error){
+        return res.status(400).json({success:false,message:validation.message});
     }
 
-    let authenticated_user = await authenticate(input.username,input.password);
-    
+    let authenticated_user = await authenticate(username,password);
     if (authenticated_user) {
         res.status(200).json({ success: true, message: "you are logged in" }); // if password is correct log in
     }
@@ -73,22 +72,17 @@ export const loginUser = async (req, res) => {
 };
 
 export const changePass = async (req, res) => {
-    let input = req.body;
+    let {username, password, new_pass} = req.body;
 
-    // check if user has entered all REQUIRED fields
-    if (!input.username || !input.password || !input.new_pass) {
-        // return an error response for bad request
-        return res.status(400).json({ success: false, message: "please enter all credentials => username,password and new_pass" });
+    // validate input
+    let validation = await validateChgPass(username,password,new_pass);
+    if(validation.error){
+        return res.status(400).json({success:false,message:validation.message});
     }
 
-    if (input.password == input.new_pass) {
-        return res.status(400).json({ success: false, message: "new and old password are same" })
-    }
-
-    let authenticated_user = await authenticate(input.username,input.password);
-    
+    let authenticated_user = await authenticate(username,password);
     if (authenticated_user) {
-        authenticated_user.password = await bcrypt.hash(input.new_pass, salt);
+        authenticated_user.password = await bcrypt.hash(new_pass, salt);
         await authenticated_user.save();
         res.status(200).json({ success: true, message: "your password has been succesfully changed" });
     }
@@ -98,16 +92,15 @@ export const changePass = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-    let input = req.body;
+    let {username, password} = req.body;
 
-    // check if user has entered all REQUIRED fields
-    if (!input.username || !input.password) {
-        // return an error response for bad request
-        return res.status(400).json({ success: false, message: "please enter all credentials => username,password" });
+    // validate input
+    let validation = await validateUser(username,password);
+    if(validation.error){
+        return res.status(400).json({success:false,message:validation.message});
     }
 
-    const authenticated_user = await authenticate(input.username,input.password);
-
+    const authenticated_user = await authenticate(username,password);
     if (authenticated_user) {
         await authenticated_user.deleteOne();
         res.status(204).json({ success: true, message: "user successfully deleted" });

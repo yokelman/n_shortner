@@ -17,12 +17,8 @@ import User from "../models/user.model.js";
 
 
 export const getUsers = async(req,res)=>{
-    try {
-        let users = await find_docs({},User);
-        res.status(200).json({success:true,users:users});
-    } catch (error) {
-        console.error(error.message)
-    }
+    let users = await find_docs({},User);
+    res.status(200).json({success:true,users:users});
 };
 
 export const registerUser = async (req,res)=>{
@@ -65,17 +61,13 @@ export const loginUser = async (req, res) => {
         return res.status(400).json({ success: false, message: "please enter all credentials => username,password" });
     }
 
-    try {
-        let authenticated_user = await authenticate(user.username,user.password);
-
-        if (authenticated_user) {
-            res.status(200).json({ success: true, message: "you are logged in" }); // if password is correct log in
-        }
-        else {
-            res.status(401).json({ success: false, message: "wrong username or password" }); // otherwise show wrong username/pass
-        }
-    } catch (error) {
-        console.error(error.message);
+    let authenticated_user = await authenticate(user.username,user.password);
+    
+    if (authenticated_user) {
+        res.status(200).json({ success: true, message: "you are logged in" }); // if password is correct log in
+    }
+    else {
+        res.status(401).json({ success: false, message: "wrong username or password" }); // otherwise show wrong username/pass
     }
 };
 
@@ -92,19 +84,15 @@ export const changePass = async (req, res) => {
         return res.status(400).json({ success: false, message: "new and old password are same" })
     }
 
-    try {
-        let authenticated_user = await authenticate(user.username,user.password);
-
-        if (authenticated_user) {
-            authenticated_user.password = await bcrypt.hash(user.new_pass, salt);
-            await authenticated_user.save();
-            res.status(200).json({ success: true, message: "your password has been succesfully changed" });
-        }
-        else {
-            res.status(401).json({ success: false, message: "wrong username or password" });
-        }
-    } catch (error) {
-        console.error(error.message);
+    let authenticated_user = await authenticate(user.username,user.password);
+    
+    if (authenticated_user) {
+        authenticated_user.password = await bcrypt.hash(user.new_pass, salt);
+        await authenticated_user.save();
+        res.status(200).json({ success: true, message: "your password has been succesfully changed" });
+    }
+    else {
+        res.status(401).json({ success: false, message: "wrong username or password" });
     }
 };
 

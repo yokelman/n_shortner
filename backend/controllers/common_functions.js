@@ -14,11 +14,15 @@ export const find_docs = async (filter,Model)=> {
 
 // authenticate user, if authenticated return the user document if not return false
 export const authenticate = async(username,password)=>{
-    const match_user = await find_docs({username: username},User);
-    if (match_user[0] && await bcrypt.compare(password, match_user[0].password)) {
-        return match_user[0];
-    }
-    else {
-        return false;
+    try {
+        const match_user = await find_docs({username: username},User);
+        if (match_user[0] && await bcrypt.compare(password, match_user[0].password)) {
+            return match_user[0];
+        }
+        else {
+            return false;
+        }
+    } catch (error) {
+        console.error(error.message);
     }
 };

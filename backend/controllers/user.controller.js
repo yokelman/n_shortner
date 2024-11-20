@@ -14,6 +14,7 @@ const salt = Number(process.env.salt);
 
 // IMPORT MODEL (REQUIRED FOR FUNCTIONS)
 import User from "../models/user.model.js";
+import Code from "../models/code.model.js";
 
 
 export const getUsers = async(req,res)=>{
@@ -22,15 +23,15 @@ export const getUsers = async(req,res)=>{
 };
 
 export const registerUser = async (req,res)=>{
-    let user = req.body; // set "user" = input given
+    let input = req.body; // set "user" = input given
 
     // check if user has entered all REQUIRED fields
-    if (!user.username || !user.password) {
+    if (!input.username || !input.password) {
         return res.status(400).json({ success: false, message: "please enter all credentials => username,password" });
     }
 
     // checking if user already EXISTS
-    const exists = await find_docs({username: user.username},User);
+    const exists = await find_docs({username: input.username},User);
 
     // if user already exists, send error for "conflitct"
     if (exists[0]) {
@@ -40,8 +41,8 @@ export const registerUser = async (req,res)=>{
     else {
         try {
             // success, save user
-            user.password = await bcrypt.hash(user.password, salt); //HASHING PASSWORD
-            const saved_user = await User.create(user);
+            input.password = await bcrypt.hash(input.password, salt); //HASHING PASSWORD
+            const saved_user = await User.create(input);
 
             res.status(201).json({ success: true, data: saved_user });
         } catch (error) {
@@ -53,15 +54,15 @@ export const registerUser = async (req,res)=>{
 };
 
 export const loginUser = async (req, res) => {
-    let user = req.body; // set "user" = input given
+    let input = req.body; // set "user" = input given
 
     // check if user has entered all REQUIRED fields
-    if (!user.username || !user.password) {
+    if (!input.username || !input.password) {
         // return an error response for bad request
         return res.status(400).json({ success: false, message: "please enter all credentials => username,password" });
     }
 
-    let authenticated_user = await authenticate(user.username,user.password);
+    let authenticated_user = await authenticate(input.username,input.password);
     
     if (authenticated_user) {
         res.status(200).json({ success: true, message: "you are logged in" }); // if password is correct log in
@@ -72,22 +73,22 @@ export const loginUser = async (req, res) => {
 };
 
 export const changePass = async (req, res) => {
-    let user = req.body;
+    let input = req.body;
 
     // check if user has entered all REQUIRED fields
-    if (!user.username || !user.password || !user.new_pass) {
+    if (!input.username || !input.password || !input.new_pass) {
         // return an error response for bad request
         return res.status(400).json({ success: false, message: "please enter all credentials => username,password and new_pass" });
     }
 
-    if (user.password == user.new_pass) {
+    if (input.password == input.new_pass) {
         return res.status(400).json({ success: false, message: "new and old password are same" })
     }
 
-    let authenticated_user = await authenticate(user.username,user.password);
+    let authenticated_user = await authenticate(input.username,input.password);
     
     if (authenticated_user) {
-        authenticated_user.password = await bcrypt.hash(user.new_pass, salt);
+        authenticated_user.password = await bcrypt.hash(input.new_pass, salt);
         await authenticated_user.save();
         res.status(200).json({ success: true, message: "your password has been succesfully changed" });
     }
@@ -97,15 +98,15 @@ export const changePass = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-    let user = req.body;
+    let input = req.body;
 
     // check if user has entered all REQUIRED fields
-    if (!user.username || !user.password) {
+    if (!input.username || !input.password) {
         // return an error response for bad request
         return res.status(400).json({ success: false, message: "please enter all credentials => username,password" });
     }
 
-    const authenticated_user = await authenticate(user.username,user.password);
+    const authenticated_user = await authenticate(input.username,input.password);
 
     if (authenticated_user) {
         await authenticated_user.deleteOne();

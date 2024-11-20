@@ -1,10 +1,10 @@
-
 // importing npm modules/libraries
 import express from "express";
 import dotenv from "dotenv";
 
 // ROUTES
 import userRoutes from './routes/user.routes.js';
+import codeRoutes from './routes/code.routes.js';
 
 // importing mongoose connection function to connect to database
 import connectDb from "./config_db.js";
@@ -15,8 +15,11 @@ const app = express();
 dotenv.config(); // to access environment variables
 app.use(express.json()); // to access input in json format
 
-// USE userRoutes from url localhost:PORT/api/user/
+// userRoutes url localhost:PORT/api/user/
 app.use('/api/user',userRoutes);
+
+// userRoutes url localhost:PORT/api/user/
+app.use('/api/code',codeRoutes);
 
 // listen at PORT
 app.listen(PORT, () => {

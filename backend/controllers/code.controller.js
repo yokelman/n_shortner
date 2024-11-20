@@ -3,7 +3,8 @@ import Code from '../models/code.model.js';
 import { authenticate, find_docs } from './common_functions.js';
 
 export const getCodes = async(req,res)=>{
-    let codes = await find_docs({},Code);
+    let input = req.body;
+    let codes = await find_docs({owner:input.owner},Code);
     res.status(200).json({success: true,codes:codes});
 }
 

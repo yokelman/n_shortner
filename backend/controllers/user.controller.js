@@ -2,6 +2,9 @@
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
+// common functions
+import { find_docs, authenticate } from './common_functions.js';
+
 // read ENVIRONMENT variables
 dotenv.config();
 
@@ -12,30 +15,10 @@ const salt = Number(process.env.salt);
 // IMPORT MODEL (REQUIRED FOR FUNCTIONS)
 import User from "../models/user.model.js";
 
-// function to FIND users, if user exists return the array of users if not return false
-async function find_users(filter) {
-    try {
-        let user_found = await User.find(filter);
-        return user_found;
-    } catch (error) {
-        console.error(error.message);
-    }
-};
-
-// authenticate user, if authenticated return the user document if not return false
-async function authenticate(user) {
-    const match_user = await find_users({username: user.username});
-    if (match_user[0] && await bcrypt.compare(user.password, match_user[0].password)) {
-        return match_user[0];
-    }
-    else {
-        return false;
-    }
-};
 
 export const getUsers = async(req,res)=>{
     try {
-        let users = await find_users({});
+        let users = await find_docs({},User);
         res.status(200).json({success:true,users:users});
     } catch (error) {
         console.error(error.message)
@@ -51,7 +34,7 @@ export const registerUser = async (req,res)=>{
     }
 
     // checking if user already EXISTS
-    const exists = await find_users({username: user.username});
+    const exists = await find_docs({username: user.username},User);
 
     // if user already exists, send error for "conflitct"
     if (exists[0]) {
@@ -83,7 +66,7 @@ export const loginUser = async (req, res) => {
     }
 
     try {
-        let authenticated_user = await authenticate(user);
+        let authenticated_user = await authenticate(user.username,user.password);
 
         if (authenticated_user) {
             res.status(200).json({ success: true, message: "you are logged in" }); // if password is correct log in
@@ -110,7 +93,7 @@ export const changePass = async (req, res) => {
     }
 
     try {
-        let authenticated_user = await authenticate(user);
+        let authenticated_user = await authenticate(user.username,user.password);
 
         if (authenticated_user) {
             authenticated_user.password = await bcrypt.hash(user.new_pass, salt);
@@ -134,7 +117,7 @@ export const deleteUser = async (req, res) => {
         return res.status(400).json({ success: false, message: "please enter all credentials => username,password" });
     }
 
-    const authenticated_user = await authenticate(user);
+    const authenticated_user = await authenticate(user.username,user.password);
 
     if (authenticated_user) {
         await authenticated_user.deleteOne();

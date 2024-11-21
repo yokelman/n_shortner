@@ -1,7 +1,8 @@
 import Code from '../models/code.model.js';
 
-import { authenticate, find_docs, validateCode } from './common_functions.js';
+import { authenticate, find_docs, validateCode } from './utils.js';
 
+// 
 export const getCodes = async(req,res)=>{
     let input = req.body;
     let codes = await find_docs({owner:input.owner},Code);

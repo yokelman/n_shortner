@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
 // common functions
-import { find_docs, authenticate, validateUser, validateChgPass } from './common_functions.js';
+import { find_docs, authenticate, validateUser, validateChgPass } from './utils.js';
 
 // read ENVIRONMENT variables
 dotenv.config();

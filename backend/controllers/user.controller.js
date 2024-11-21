@@ -1,8 +1,8 @@
-// LIBRARIES
+// importing LIBRARIES
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
-// common functions
+// importing UTILITIES
 import { find_docs, authenticate, validateUser, validateChgPass } from './utils.js';
 
 // read ENVIRONMENT variables
@@ -12,18 +12,25 @@ dotenv.config();
 const salt = Number(process.env.salt);
 // console.log(salt)
 
-// IMPORT MODEL (REQUIRED FOR FUNCTIONS)
+// importing mongoose MODELS
 import User from "../models/user.model.js";
 import Code from "../models/code.model.js";
 
 
+// controller for '/' (to get all users)
+// () => (all saved users)
 export const getUsers = async(req,res)=>{
+    // get all users saved
     let users = await find_docs({},User);
+    // return saved "users"
     res.status(200).json({success:true,users:users});
 };
 
+// controller for '/register'
+// (username, password) => (if username is not taken then register user and return saved user, else return the error)
 export const registerUser = async (req,res)=>{
-    let {username,password} = req.body; // set "user" = input given
+    // get username and password from input
+    let {username,password} = req.body;
 
     // validate input
     let validation = await validateUser(username,password);
@@ -53,8 +60,11 @@ export const registerUser = async (req,res)=>{
     }
 };
 
+// controller for '/login'
+// (username, password) => (if authenticated return "true", else "false")
 export const loginUser = async (req, res) => {
-    let {password,username} = req.body; // set "user" = input given
+    // get the username and password from input
+    let {password,username} = req.body;
 
     // validate input
     let validation = await validateUser(username,password);
@@ -62,6 +72,7 @@ export const loginUser = async (req, res) => {
         return res.status(400).json({success:false,message:validation.message});
     }
 
+    // authenticate user
     let authenticated_user = await authenticate(username,password);
     if (authenticated_user) {
         res.status(200).json({ success: true, message: "you are logged in" }); // if password is correct log in
@@ -71,7 +82,10 @@ export const loginUser = async (req, res) => {
     }
 };
 
+// controller for '/changepass'
+// (username, password, new_pass) => (if authenticated update password and return "true", else return "false")
 export const changePass = async (req, res) => {
+    // get username, password and new_pass from input
     let {username, password, new_pass} = req.body;
 
     // validate input
@@ -80,8 +94,10 @@ export const changePass = async (req, res) => {
         return res.status(400).json({success:false,message:validation.message});
     }
 
+    // authenticate user
     let authenticated_user = await authenticate(username,password);
-    if (authenticated_user) {
+
+    if (authenticated_user) { // if authenticated change the password in the database
         authenticated_user.password = await bcrypt.hash(new_pass, salt);
         await authenticated_user.save();
         res.status(200).json({ success: true, message: "your password has been succesfully changed" });
@@ -91,7 +107,10 @@ export const changePass = async (req, res) => {
     }
 };
 
+// controller for '/delete'
+// (username, password) => (if authenticated delete user and its codes and return "true", else return "false")
 export const deleteUser = async (req, res) => {
+    // get username and password from input
     let {username, password} = req.body;
 
     // validate input
@@ -100,6 +119,7 @@ export const deleteUser = async (req, res) => {
         return res.status(400).json({success:false,message:validation.message});
     }
 
+    // authenticate user
     const authenticated_user = await authenticate(username,password);
     if (authenticated_user) {
         await authenticated_user.deleteOne();

@@ -51,3 +51,37 @@ export const assignCode = async(req,res)=>{
         console.error(error.message);
     }
 }
+
+// controller for '/delete' (delete a code)
+// (value,owner,password)=>(deletes the code if authenticated else gives suitable error)
+export const deleteCode = async(req,res)=>{
+    // get value, owner, password from user input
+    let input = req.body;
+    
+    // validate the input
+    let validation = await validateCode(input,["value","owner","password"]);
+    if(validation.error){
+        return res.status(400).json({success:false,message:validation.message});
+    }
+
+    // CHECK IF VALUE EXISTS OR NOT IF IT DOESNT EXIST THEN DONT DELETE
+    const exists = await find_docs({value:input.value},Code);
+    if(!exists[0]){
+        return res.status(404).json({success:false,message:"code doesnt exist with that value"});
+    }
+
+    // authenticating user for assigning code
+    const authenticated = await authenticate(input.owner,input.password);
+    if(!authenticated){
+        return res.status(401).json({success:false,message:"wrong username/password"});
+    }    
+
+
+    // delete the code
+    try {
+        const deleted_code = await Code.deleteOne({value:input.value});
+        res.status(204).json({success:true,code:deleted_code});
+    } catch (error) {
+        console.error(error.message);
+    }
+}

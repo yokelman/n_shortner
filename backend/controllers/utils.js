@@ -1,8 +1,10 @@
+// importing libraries
 import bcrypt from 'bcrypt';
 
+// importing mongoose models
 import User from '../models/user.model.js';
 
-// function to FIND users, if user exists return the array of users if not return false
+// (filter,model) => (returns array of documents found)
 export const find_docs = async (filter,Model)=> {
     try {
         let docs_found = await Model.find(filter);
@@ -12,7 +14,7 @@ export const find_docs = async (filter,Model)=> {
     }
 };
 
-// authenticate user, if authenticated return the user document if not return false
+// (username,password) => (if password is correct return the user, else return false)
 export const authenticate = async(username,password)=>{
     try {
         const match_user = await find_docs({username: username},User);
@@ -27,17 +29,22 @@ export const authenticate = async(username,password)=>{
     }
 };
 
+// (value,owner,password,redirect) => (if fields are valid returns {error:false}, else return {error:true,message})
 export const validateCode = async(value,owner,password,redirect)=>{
+    // checking if all fields are inputted
     if(!value || !owner || !password || !redirect){
-        return {error:true,message:"please enter all credentials"}
+        return {error:true,message:"please enter all required fields"}
     }
+    // checking if value is 6 digit
     else if(value>999999 || value<0){
         return {error:true,message:"enter value b/w 0 and 999999"}
     }
     return {error:false}
 }
 
+// (username,password) => (checks if given fields are entered, if not returns {error:true,message})
 export const validateUser = async(username,password)=>{
+    // checking if username and password are entered
     if(!username || !password){
         return {error:true,message:"please enter all required fields"}
     }
@@ -45,10 +52,13 @@ export const validateUser = async(username,password)=>{
 
 }
 
+// (username,password, new_pass) => (check if given fields are valid then return {error:false}, if not return {error:true,message})
 export const validateChgPass = async(username,password,new_pass)=>{
+    // checking if username,password,new_pass are inputted
     if(!username || !password ||!new_pass){
         return {error:true,message:"please enter all required fields"}
     }
+    // check if old and new pass are same
     else if(password == new_pass){
         return {error:true,message:"new and old pass cant be same"}
     }

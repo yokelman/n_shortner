@@ -30,7 +30,7 @@ export const authenticate = async(username,password)=>{
 };
 
 // (value,owner,password,redirect) => (if fields are valid returns {error:false}, else return {error:true,message})
-export const validateCode = async(value,owner,password,redirect)=>{
+export const validateCode = async(value,owner,password,redirect = 0)=>{
     // checking if all fields are inputted
     if(!value || !owner || !password || !redirect){
         return {error:true,message:"please enter all required fields"}
@@ -42,24 +42,16 @@ export const validateCode = async(value,owner,password,redirect)=>{
     return {error:false}
 }
 
-// (username,password) => (checks if given fields are entered, if not returns {error:true,message})
-export const validateUser = async(username,password)=>{
-    // checking if username and password are entered
-    if(!username || !password){
-        return {error:true,message:"please enter all required fields"}
-    }
-    return {error:false}
-
-}
-
 // (username,password, new_pass) => (check if given fields are valid then return {error:false}, if not return {error:true,message})
-export const validateChgPass = async(username,password,new_pass)=>{
+export const validateUser = async(username,password,new_pass = 0)=>{
+    // new_pass = 0 so that when its not required it will just skip both the existance and repeatation check
+    
     // checking if username,password,new_pass are inputted
     if(!username || !password ||!new_pass){
         return {error:true,message:"please enter all required fields"}
     }
     // check if old and new pass are same
-    else if(password == new_pass){
+    else if(password === new_pass){
         return {error:true,message:"new and old pass cant be same"}
     }
     return {error:false}

@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
 // importing UTILITIES
-import { find_docs, authenticate, validateUser, validateChgPass } from './utils.js';
+import { find_docs, authenticate, validateUser } from './utils.js';
 
 // read ENVIRONMENT variables
 dotenv.config();
@@ -89,7 +89,7 @@ export const changePass = async (req, res) => {
     let {username, password, new_pass} = req.body;
 
     // validate input
-    let validation = await validateChgPass(username,password,new_pass);
+    let validation = await validateUser(username,password,new_pass);
     if(validation.error){
         return res.status(400).json({success:false,message:validation.message});
     }

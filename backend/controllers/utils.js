@@ -30,28 +30,32 @@ export const authenticate = async(username,password)=>{
 };
 
 // (value,owner,password,redirect) => (if fields are valid returns {error:false}, else return {error:true,message})
-export const validateCode = async(value,owner,password,redirect = 1)=>{
+export const validateCode = async(input,required_fields)=>{
     // checking if all fields are inputted
-    if(!value || !owner || !password || !redirect){
-        return {error:true,message:"please enter all required fields"}
+    // console.log(required_fields)
+    for (let field of required_fields){
+        if(!input[field]){
+            return {error:true,message:"enter all required fields"};
+        }
     }
     // checking if value is 6 digit
-    else if(value>999999 || value<0){
-        return {error:true,message:"enter value b/w 0 and 999999"}
+    if(input.value>999999 || input.value<0){
+        return {error:true,message:"enter value b/w 0 and 999999"};
     }
     return {error:false}
 }
 
 // (username,password, new_pass) => (check if given fields are valid then return {error:false}, if not return {error:true,message})
-export const validateUser = async(username,password,new_pass = 1)=>{
-    // new_pass = 0 so that when its not required it will just skip both the existance and repeatation check
+export const validateUser = async(input,required_fields)=>{
     
-    // checking if username,password,new_pass are inputted
-    if(!username || !password ||!new_pass){
-        return {error:true,message:"please enter all required fields"}
+    // checking if all fields are inputted
+    for (let field of required_fields){
+        if(!input[field]){
+            return {error:true,message:"enter all required fields"};
+        }
     }
     // check if old and new pass are same
-    else if(password === new_pass){
+    if(required_fields.includes("new_pass" && input.password == input.new_pass)){
         return {error:true,message:"new and old pass cant be same"}
     }
     return {error:false}

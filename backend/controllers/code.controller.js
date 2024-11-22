@@ -23,29 +23,29 @@ export const getCodes = async(req,res)=>{
 export const assignCode = async(req,res)=>{
 
     // get value, owner, password, redirect from user input
-    let {value,owner,password,redirect} = req.body;
+    let input = req.body;
     
     // validate the input
-    let validation = await validateCode(value,owner,password,redirect);
+    let validation = await validateCode(input,["value","owner","redirect","password"]);
     if(validation.error){
         return res.status(400).json({success:false,message:validation.message});
     }
 
     // checking for dupes
-    const code_exists = await find_docs({value:value},Code);
+    const code_exists = await find_docs({value:input.value},Code);
     if(code_exists[0]){
         return res.status(409).json({success:false,message:"value is already taken"});
     }
     
     // authenticating user for assigning code
-    const authenticated = await authenticate(owner,password);
+    const authenticated = await authenticate(input.owner,input.password);
     if(!authenticated){
         return res.status(401).json({success:false,message:"wrong username/password"});
     }
 
     // assign the code to the given owner
     try {
-        const saved_code = await Code.create({owner:owner,value:value,redirect:redirect});
+        const saved_code = await Code.create({owner:input.owner,value:input.value,redirect:input.redirect});
         res.status(201).json({success:true,code:saved_code});
     } catch (error) {
         console.error(error.message);

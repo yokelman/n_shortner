@@ -1,7 +1,10 @@
+// importing express
 import express from 'express'
 
+// importing controllers
 import {registerUser,loginUser, changePass, deleteUser, getUsers} from '../controllers/user.controller.js';
 
+// initialize "router"
 const router = express.Router();
 
 // listen to get requests
@@ -19,4 +22,5 @@ router.put("/changepass",changePass);
 // DELETE USER
 router.delete("/delete",deleteUser);
 
+// export router
 export default router;

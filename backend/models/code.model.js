@@ -1,5 +1,7 @@
+// importing mongoose library
 import mongoose from "mongoose";
 
+// code schema => {owner,value,redirect == all required}
 const CodeSchema = mongoose.Schema({
     owner:{
         type: String,
@@ -15,6 +17,8 @@ const CodeSchema = mongoose.Schema({
     }
 });
 
+// mongoose model
 const Code = mongoose.model("Code",CodeSchema);
 
+// export the model
 export default Code;

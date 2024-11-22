@@ -11,5 +11,5 @@ const router = express.Router();
 router.get('/',getCodes);
 router.post('/assign',assignCode);
 
-// export
+// export router
 export default router;

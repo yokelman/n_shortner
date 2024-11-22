@@ -30,7 +30,7 @@ export const authenticate = async(username,password)=>{
 };
 
 // (value,owner,password,redirect) => (if fields are valid returns {error:false}, else return {error:true,message})
-export const validateCode = async(value,owner,password,redirect = 0)=>{
+export const validateCode = async(value,owner,password,redirect = 1)=>{
     // checking if all fields are inputted
     if(!value || !owner || !password || !redirect){
         return {error:true,message:"please enter all required fields"}
@@ -43,7 +43,7 @@ export const validateCode = async(value,owner,password,redirect = 0)=>{
 }
 
 // (username,password, new_pass) => (check if given fields are valid then return {error:false}, if not return {error:true,message})
-export const validateUser = async(username,password,new_pass = 0)=>{
+export const validateUser = async(username,password,new_pass = 1)=>{
     // new_pass = 0 so that when its not required it will just skip both the existance and repeatation check
     
     // checking if username,password,new_pass are inputted

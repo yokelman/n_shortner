@@ -121,17 +121,17 @@ export const deleteUser = async (req, res) => {
 
     // authenticate user
     const authenticated_user = await authenticate(username,password);
-    if (authenticated_user) {
-        await authenticated_user.deleteOne();
-        res.status(204).json({ success: true, message: "user successfully deleted" });
+    if (!authenticated_user) {
+        return res.status(401).json({ success: false, message: "wrong username or password" });
     }
-    else { // password doesnt match or user doesnt exists then send this
-        res.status(401).json({ success: false, message: "wrong username or password" });
-    }
-
-    // DELETE CODES OF THE USER WHEN USER IS DELETED
+    
+    // DELETE the user and its owned codes
     try {
+        await authenticated_user.deleteOne();
         await Code.deleteMany({owner:authenticated_user.username});
+
+        return res.status(204).json({ success: true, message: "user successfully deleted" });
+
     } catch (error) {
         console.error(error.message);
     }

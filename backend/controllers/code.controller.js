@@ -8,11 +8,17 @@ import { authenticate, find_docs, validateCode } from './utils.js';
 // (owner of the codes needed) => (all codes of "owner" in json format)
 export const getCodes = async(req,res)=>{
     
+    // setting the filter to find codes
+    let filter = {}
+
     // get the "owner" from input data
-    let {owner} = req.body;
+    let {owner} = req.params;
     
-    // find the codes of the specific owner
-    let codes = await find_docs({owner:owner},Code);
+    // find the codes of the specific owner if path is '/owner'
+    if(owner){
+        filter = {owner:owner};
+    }
+    let codes = await find_docs(filter,Code);
     
     // return the codes found
     res.status(200).json({success: true,codes:codes});

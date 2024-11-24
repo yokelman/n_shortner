@@ -11,7 +11,7 @@ export const find_docs = async (filter,Model)=> {
         return docs_found;
     } catch (error) {
         console.error(error.message);
-        return [];
+        return null;
     }
 };
 

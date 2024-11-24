@@ -11,6 +11,7 @@ export const find_docs = async (filter,Model)=> {
         return docs_found;
     } catch (error) {
         console.error(error.message);
+        return [];
     }
 };
 
@@ -26,6 +27,7 @@ export const authenticate = async(username,password)=>{
         }
     } catch (error) {
         console.error(error.message);
+        return false;
     }
 };
 

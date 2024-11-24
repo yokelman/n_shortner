@@ -27,7 +27,7 @@ export const authenticate = async(username,password)=>{
         }
     } catch (error) {
         console.error(error.message);
-        return false;
+        return null;
     }
 };
 

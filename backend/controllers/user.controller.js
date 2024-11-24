@@ -21,9 +21,20 @@ import Code from "../models/code.model.js";
 // () => (all saved users)
 export const getUsers = async(req,res)=>{
     // get all users saved
-    let users = await find_docs({},User);
-    // return saved "users"
-    res.status(200).json({success:true,users:users});
+    try {
+        let users = await find_docs({},User);
+        if(users === null){
+            return res.status(500).json({success:false,message:"internal server error"});
+        }
+        if(users.length === 0){
+            return res.status(404).json({success:false,message:"no users found"});
+        }
+        // return saved "users"
+        return res.status(200).json({success:true,users:users});
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({success:false,message:"something went wrong"});
+    }
 };
 
 // controller for '/register'
@@ -38,27 +49,30 @@ export const registerUser = async (req,res)=>{
         return res.status(400).json({success:false,message:validation.message});
     }
 
-    // checking if user already EXISTS
-    const exists = await find_docs({username: input.username},User);
-    // if user already exists, send error for "conflitct"
-    if (exists[0]) {
-        res.status(409).json({ success: false, message: "user already exists" });
-    }
-    // if user doesnt already exists save the user in the database
-    else {
-        try {
-            // success, save user
-            input.password = await bcrypt.hash(input.password, salt); //HASHING PASSWORD
-            const saved_user = await User.create({username:input.username,password:input.password});
-
-            res.status(201).json({ success: true, data: saved_user });
-        } catch (error) {
-            // error in saving document
-            res.status(500).json({ success: false, message: "server error" });
-            console.error(error.message);
+    try {
+        // checking if user already EXISTS
+        const exists = await find_docs({username: input.username},User);
+        
+        if(exists === null){
+            return res.status(500).json({success:false,message:"internal server error"});
         }
+
+        // if user already exists, send error for "conflitct"
+        if (exists.length != 0) {
+            return res.status(409).json({ success: false, message: "user already exists" });
+        }
+        
+        input.password = await bcrypt.hash(input.password, salt); //HASHING PASSWORD
+        const saved_user = await User.create({username:input.username,password:input.password});
+            
+        return res.status(201).json({ success: true, data: saved_user });
     }
-};
+    catch (error) {
+        console.error(error.message);
+        return res.status(500).json({ success: false, message: "something went wrong" });
+        
+    }
+}
 
 // controller for '/login'
 // (username, password) => (if authenticated return "true", else "false")
@@ -73,12 +87,21 @@ export const loginUser = async (req, res) => {
     }
 
     // authenticate user
-    let authenticated_user = await authenticate(input.username,input.password);
-    if (authenticated_user) {
-        res.status(200).json({ success: true, message: "you are logged in" }); // if password is correct log in
-    }
-    else {
-        res.status(401).json({ success: false, message: "wrong username or password" }); // otherwise show wrong username/pass
+    try {
+        let authenticated_user = await authenticate(input.username,input.password);
+
+        if(authenticated_user === null){
+            return res.status(500).json({success:false,message:"internal server error"});
+        }
+
+        if (authenticated_user) {
+            return res.status(200).json({ success: true, message: "you are logged in" }); // if password is correct log in
+        }
+
+        return res.status(401).json({ success: false, message: "wrong username or password" }); // otherwise show wrong username/pass
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({success:false,message:"something went wrong"});
     }
 };
 
@@ -95,15 +118,22 @@ export const changePass = async (req, res) => {
     }
 
     // authenticate user
-    let authenticated_user = await authenticate(input.username,input.password);
+    try {
+        let authenticated_user = await authenticate(input.username,input.password);
+        
+        if(authenticated_user === null){
+            return res.status(500).json({success:false,message:"internal server error"});
+        }
 
-    if (authenticated_user) { // if authenticated change the password in the database
-        authenticated_user.password = await bcrypt.hash(input.new_pass, salt);
-        await authenticated_user.save();
-        res.status(200).json({ success: true, message: "your password has been succesfully changed" });
-    }
-    else {
-        res.status(401).json({ success: false, message: "wrong username or password" });
+        if (authenticated_user) { // if authenticated change the password in the database
+            authenticated_user.password = await bcrypt.hash(input.new_pass, salt);
+            await authenticated_user.save();
+            return res.status(200).json({ success: true, message: "your password has been succesfully changed" });
+        }
+        return res.status(401).json({ success: false, message: "wrong username or password" });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({success:false,message:"something went wrong"});
     }
 };
 
@@ -119,21 +149,24 @@ export const deleteUser = async (req, res) => {
         return res.status(400).json({success:false,message:validation.message});
     }
 
-    // authenticate user
-    const authenticated_user = await authenticate(input.username,input.password);
-    if (!authenticated_user) {
-        return res.status(401).json({ success: false, message: "wrong username or password" });
-    }
-    
-    // DELETE the user and its owned codes
     try {
-        await authenticated_user.deleteOne();
-        await Code.deleteMany({owner:authenticated_user.username});
-
-        return res.status(204).json({ success: true, message: "user successfully deleted" });
-
+        // authenticate user
+        let authenticated_user = await authenticate(input.username,input.password);
+        if(authenticated_user === null){
+            return res.status(500).json({success:false,message:"internal server error"});
+        }
+        if (authenticated_user) {
+            // DELETE the user and its owned codes
+            await authenticated_user.deleteOne();
+            await Code.deleteMany({owner:authenticated_user.username});
+        
+            return res.status(204).json({ success: true, message: "user successfully deleted" });
+        }
+        return res.status(401).json({ success: false, message: "wrong username or password" });
+        
     } catch (error) {
         console.error(error.message);
+        return res.status(500).json({success:false,message:"something went wrong"});
     }
 
 };

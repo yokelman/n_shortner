@@ -30,6 +30,6 @@ export const redirectCode = async (req,res)=>{
         return res.redirect(found_code[0].redirect);
     } catch (error) {
         console.error(error.message);
-        return res.status(500).json({success:false,message:"internal server error occurred"});
+        return res.status(500).json({success:false,message:"something went wrong"});
     }
 }

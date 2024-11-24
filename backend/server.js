@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 // ROUTES
 import userRoutes from './routes/user.routes.js';
 import codeRoutes from './routes/code.routes.js';
+import mainRoutes from './routes/main.routes.js';
 
 // importing mongoose connection function to connect to database
 import connectDb from "./config_db.js";
@@ -25,6 +26,9 @@ app.use('/api/user',userRoutes);
 
 // userRoutes url localhost:PORT/api/user/
 app.use('/api/code',codeRoutes);
+
+// main routes
+app.use('/',mainRoutes);
 
 // listen at PORT
 app.listen(PORT, () => {

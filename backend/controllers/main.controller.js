@@ -19,7 +19,7 @@ export const redirectCode = async (req,res)=>{
         if(found_code.length == 0){
             return res.status(404).json({success:false,message:"code not found"});
         }
-        return res.redirect("https://" + found_code[0].redirect);
+        return res.redirect(found_code[0].redirect);
     } catch (error) {
         console.error(error.message);
         return res.status(500).json({success:false,message:"internal server error occurred"});

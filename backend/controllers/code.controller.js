@@ -47,7 +47,7 @@ export const assignCode = async(req,res)=>{
     let input = req.body;
     
     // validate the input
-    let validation = await validateCode(input,["value","owner","redirect","password","visiblity"]);
+    let validation = await validateCode(input,["value","owner","redirect","password","visibility"]);
     if(validation.error){
         return res.status(400).json({success:false,message:validation.message});
     }

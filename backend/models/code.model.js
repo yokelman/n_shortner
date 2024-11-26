@@ -14,6 +14,10 @@ const CodeSchema = mongoose.Schema({
     redirect:{
         type: String,
         required: true
+    },
+    visibility:{
+        type: String,
+        required: true
     }
 });
 

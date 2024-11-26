@@ -9,7 +9,7 @@ import { authenticate, find_docs, validateCode } from './utils.js';
 export const getCodes = async(req,res)=>{
     
     // setting the filter to find codes
-    let filter = {}
+    let filter = {visibility:"public"};
 
     // get the "owner" from input data
     let {owner} = req.params;
@@ -17,6 +17,7 @@ export const getCodes = async(req,res)=>{
     // find the codes of the specific owner if path is '/owner'
     if(owner){
         filter = {owner:owner};
+        // AUTHENTICATE BEFORE RETURNING PRIVATE CODES
     }
     try {
         
@@ -46,7 +47,7 @@ export const assignCode = async(req,res)=>{
     let input = req.body;
     
     // validate the input
-    let validation = await validateCode(input,["value","owner","redirect","password"]);
+    let validation = await validateCode(input,["value","owner","redirect","password","visiblity"]);
     if(validation.error){
         return res.status(400).json({success:false,message:validation.message});
     }
@@ -69,7 +70,7 @@ export const assignCode = async(req,res)=>{
         }
     
         // assign the code to the given owner
-        const saved_code = await Code.create({owner:input.owner,value:input.value,redirect:input.redirect});
+        const saved_code = await Code.create({owner:input.owner,value:input.value,redirect:input.redirect,visibility:input.visibility});
         return res.status(201).json({success:true,code:saved_code});
     } catch (error) {
         console.error(error.message);

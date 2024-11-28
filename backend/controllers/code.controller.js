@@ -47,7 +47,7 @@ export const assignCode = async(req,res)=>{
     let input = req.body;
     
     // validate the input
-    let validation = await validateCode(input,["value","owner","redirect","password","visibility"]);
+    let validation = await validateCode(input,["value","owner","redirect","password","visibility","note"]);
     if(validation.error){
         return res.status(400).json({success:false,message:validation.message});
     }
@@ -70,7 +70,7 @@ export const assignCode = async(req,res)=>{
         }
     
         // assign the code to the given owner
-        const saved_code = await Code.create({owner:input.owner,value:input.value,redirect:input.redirect,visibility:input.visibility});
+        const saved_code = await Code.create({owner:input.owner,value:input.value,redirect:input.redirect,visibility:input.visibility,note:input.note});
         return res.status(201).json({success:true,code:saved_code});
     } catch (error) {
         console.error(error.message);

@@ -13,15 +13,15 @@ function create_code_elems(codes) {
 
         let code_div = document.createElement('div');
         let value = document.createElement('a');
-        let redirect = document.createElement('span');
+        let note = document.createElement('span');
 
-        redirect.innerText = element.redirect;
+        note.innerText = element.note;
         value.innerText = `click to visit: ${padded_val}`;
         value.href = padded_val;
 
         code_div.className = "w-full lg:w-1/4 md:w-1/3 sm:w-1/2 min-h-[25vh] border border-black flex flex-col justify-between overflow-hidden p-2 my-1";
 
-        code_div.appendChild(redirect);
+        code_div.appendChild(note);
         code_div.appendChild(value);
         codes_container.appendChild(code_div);
     });

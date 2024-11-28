@@ -18,6 +18,10 @@ const CodeSchema = mongoose.Schema({
     visibility:{
         type: String,
         required: true
+    },
+    note:{
+        type: String,
+        required: true
     }
 });
 

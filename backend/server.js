@@ -37,7 +37,7 @@ app.use('/api/code',codeRoutes);
 app.use('/',mainRoutes);
 
 // serving static files
-app.use(express.static(path.join(__dirname, '../static')));
+app.use('/static',express.static(path.join(__dirname, '../static')));
 
 // listen at PORT
 app.listen(PORT, () => {

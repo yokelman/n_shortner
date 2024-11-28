@@ -2,6 +2,12 @@
 import express from "express";
 import dotenv from "dotenv";
 
+// to server static file we need __dirname thats not in es module so we have to manually define it
+import path from 'path'
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // ROUTES
 import userRoutes from './routes/user.routes.js';
 import codeRoutes from './routes/code.routes.js';
@@ -29,6 +35,9 @@ app.use('/api/code',codeRoutes);
 
 // main routes
 app.use('/',mainRoutes);
+
+// serving static files
+app.use(express.static(path.join(__dirname, '../static')));
 
 // listen at PORT
 app.listen(PORT, () => {

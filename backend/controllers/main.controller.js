@@ -1,6 +1,12 @@
 // importing models
 import Code from '../models/code.model.js'
 
+// to server static file we need __dirname thats not in es module so we have to manually define it
+import path from 'path'
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // importing UTILITY
 import { find_docs } from './utils.js';
 
@@ -32,4 +38,8 @@ export const redirectCode = async (req,res)=>{
         console.error(error.message);
         return res.status(500).json({success:false,message:"something went wrong"});
     }
+}
+
+export const serverFile = (file_address) => async(req,res)=>{
+    return res.sendFile(path.join(__dirname,'../../static',file_address));
 }

@@ -10,6 +10,7 @@ const router = express.Router();
 // routes
 router.get('/:owner?',getCodes);
 router.post('/assign',assignCode);
+// router.put('/update',updateCode);
 router.delete('/delete',deleteCode);
 
 // export router

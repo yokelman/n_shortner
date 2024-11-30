@@ -26,6 +26,7 @@ dotenv.config();
 
 // to access input in json format
 app.use(express.json()); 
+app.use(express.urlencoded({extended:true}));
 
 // userRoutes url localhost:PORT/api/user/
 app.use('/api/user',userRoutes);

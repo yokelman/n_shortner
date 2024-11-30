@@ -3,9 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static/output.css" rel="stylesheet">
     <title>N_shortner</title>
 </head>
-<body>
-    register
+<body class="text-red-700 flex flex-col items-center">
+    <span>REGISTER</span>
+    <div id="reg_form">
+        <form action="/api/user/register" method="post" class="flex flex-col mt-8" autocomplete="off" target="_blank">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" class="border border-black">
+
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" class="border border-black">
+            
+            <input type="submit" value="Register!!" class="bg-black">
+
+        </form>
+    </div>
+    <div id="login_redirect" class="mt-8">Already have an account? <a href="/login">Login</a></div>
 </body>
+<script src="/static/register.js"></script>
 </html>

@@ -37,7 +37,7 @@ export const validateCode = async(input,required_fields)=>{
     // console.log(required_fields)
     for (let field of required_fields){
         if(!input[field]){
-            return {error:true,message:"enter all required fields"};
+            return {error:true,message:`enter ${field} fields`};
         }
     }
     // checking if value is 6 digit
@@ -53,7 +53,7 @@ export const validateUser = async(input,required_fields)=>{
     // checking if all fields are inputted
     for (let field of required_fields){
         if(!input[field]){
-            return {error:true,message:"enter all required fields"};
+            return {error:true,message:`enter ${field} fields`};
         }
     }
     // check if old and new pass are same

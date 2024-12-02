@@ -16,8 +16,20 @@ export const getCodes = async(req,res)=>{
     
     // find the codes of the specific owner if path is '/owner'
     if(owner){
+        let {password} = req.body;
+        if(!password){
+            return res.status(400).json({success:false,message:"please enter password"});
+        }
         filter = {owner:owner};
-        // AUTHENTICATE BEFORE RETURNING PRIVATE CODES
+
+        // authenticating user
+        const authenticated = await authenticate(owner,password);
+        if(authenticated === null){
+            return res.status(500).json({success:false,message:"internal server error"});
+        }
+        if(!authenticated){
+            return res.status(401).json({success:false,message:"wrong username/password"});
+        }
     }
     try {
         
@@ -28,7 +40,7 @@ export const getCodes = async(req,res)=>{
         }
         // check if no codes found
         if(codes.length === 0){
-            return res.status(404).json({success:false,message:"no codes found"});
+            return res.status(404).json({success:false,message:"no codes found",code:404});
         }
         
         // return the codes found

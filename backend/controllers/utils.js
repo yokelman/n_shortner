@@ -53,7 +53,7 @@ export const validateUser = async(input,required_fields)=>{
     // checking if all fields are inputted
     for (let field of required_fields){
         if(!input[field]){
-            return {error:true,message:`enter ${field} fields`};
+            return {error:true,message:`enter ${field} field`};
         }
     }
     // check if old and new pass are same

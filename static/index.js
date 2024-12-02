@@ -1,4 +1,4 @@
-fetch('/api/code')
+fetch('/api/code',{method:"POST",headers: {"Content-Type": "application/json"}})
     .then((data) => {
         data.json()
         .then((j_data) => {

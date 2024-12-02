@@ -106,7 +106,7 @@ export const deleteCode = async(req,res)=>{
     
         // delete the code
         const deleted_code = await Code.deleteOne({value:input.value});
-        return res.status(204).json({success:true,code:deleted_code});
+        return res.status(200).json({success:true,code:deleted_code});
     } catch (error) {
         console.error(error.message);
         return res.status(500).json({success:false,messasge:"something went wrong"});

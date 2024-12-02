@@ -160,7 +160,7 @@ export const deleteUser = async (req, res) => {
             await authenticated_user.deleteOne();
             await Code.deleteMany({owner:authenticated_user.username});
         
-            return res.status(204).json({ success: true, message: "user successfully deleted" });
+            return res.status(200).json({ success: true, message: "user successfully deleted" });
         }
         return res.status(401).json({ success: false, message: "wrong username or password" });
         

@@ -29,7 +29,6 @@ function create_code_elems(codes) {
                     body:JSON.stringify({value:element.value,owner:owner,password:"test"})
                 });
                 const json = await response.json();
-                // console.log(json.success);
                 if(json.success){
                     code_div.remove();
                 }

@@ -17,10 +17,10 @@ router.post("/register", registerUser);
 router.post("/login",loginUser);
 
 // CHANGE PASSWORD
-router.put("/changepass",changePass);
+router.post("/changepass",changePass);
 
 // DELETE USER
-router.delete("/delete",deleteUser);
+router.post("/delete",deleteUser);
 
 // export router
 export default router;

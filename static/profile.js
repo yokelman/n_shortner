@@ -4,7 +4,7 @@ fetch(`/api/code/${owner}`)
         data.json()
         .then((j_data) => {
             create_code_elems(j_data.codes);
-            document.getElementById('loading').innerText = "YOUR CODES"
+            document.getElementById('loading').innerText = "YOUR CODES";
         })
     });
 

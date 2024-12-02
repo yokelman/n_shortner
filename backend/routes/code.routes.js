@@ -8,10 +8,10 @@ import { assignCode, deleteCode, getCodes } from '../controllers/code.controller
 const router = express.Router();
 
 // routes
-router.post('/:owner?',getCodes);
 router.post('/assign',assignCode);
-// router.post('/update',updateCode);
 router.post('/delete',deleteCode);
+router.post('/:owner?',getCodes);
+// router.post('/update',updateCode);
 
 // export router
 export default router;

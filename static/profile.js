@@ -1,10 +1,15 @@
-let owner = "aayush2";
-fetch(`/api/code/${owner}`)
+let owner = "aayushfs01";
+fetch(`/api/code/${owner}`,{body:JSON.stringify({password:"test"}),method:"POST",headers: {"Content-Type": "application/json"}})
     .then((data) => {
         data.json()
         .then((j_data) => {
-            create_code_elems(j_data.codes);
-            document.getElementById('loading').innerText = "YOUR CODES";
+            if(j_data.code == 404){
+                document.getElementById('loading').innerText = "NO CODES FOUND"
+            }
+            else{
+                create_code_elems(j_data.codes);
+                document.getElementById('loading').innerText = "YOUR CODES";
+            }
         })
     });
 

@@ -9,17 +9,42 @@
 <body class="text-red-700 flex flex-col items-center">
     <span>LOGIN</span>
     <div id="log_form">
-        <form action="/api/user/login" method="post" class="flex flex-col mt-8" autocomplete="off" target="_blank">
+        <div class="flex flex-col mt-8" autocomplete="off" target="_blank">
             <label for="username">Username</label>
             <input type="text" name="username" id="username" class="border border-black">
 
             <label for="password">Password</label>
             <input type="password" name="password" id="password" class="border border-black">
             
-            <input type="submit" value="Login!!" class="bg-black">
+            <button class="border border-black mt-2" id="submit_btn">LOGIN!!!</button>
 
-        </form>
+        </div>
     </div>
     <div id="register_redirect" class="mt-8">Don't have an account? <a href="/register">Register</a></div>
 </body>
+<script>
+    document.getElementById("submit_btn").addEventListener("click",(event)=>{
+        
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+        
+        fetch("/api/user/login",{
+            body:JSON.stringify({
+                username:username,
+                password:password
+            }),
+            method:"POST",
+            headers: {"Content-Type": "application/json"}
+        })
+        .then((data)=>{
+            data.json()
+            .then((j_data)=>{
+                if(j_data.success){
+                    document.cookie = `username=${username}`;
+                    document.cookie = `password=${password}`;
+                }
+            })
+        })
+    })
+</script>
 </html>

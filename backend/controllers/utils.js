@@ -36,7 +36,7 @@ export const validateCode = async(input,required_fields)=>{
     // checking if all fields are inputted
     // console.log(required_fields)
     for (let field of required_fields){
-        if(input[field] === null || input[field] === undefined || input[field] == ""){
+        if(input[field] === null || input[field] === undefined || input[field] === ""){
             return {error:true,message:`enter ${field} fields`};
         }
     }

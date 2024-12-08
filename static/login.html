@@ -37,6 +37,7 @@
         .then((data)=>{
             data.json()
             .then((j_data)=>{
+                console.log(j_data);
                 if(j_data.success){
                     document.cookie = `username=${username}`;
                     document.cookie = `password=${password}`;

@@ -1,6 +1,8 @@
 // importing npm modules/libraries
 import express from "express";
 import dotenv from "dotenv";
+import cookieparser from "cookie-parser";
+import jsonwebtoken from "jsonwebtoken";
 
 // to server static file we need __dirname thats not in es module so we have to manually define it
 import path from 'path'
@@ -27,6 +29,9 @@ dotenv.config();
 // to access input in json format
 app.use(express.json()); 
 app.use(express.urlencoded({extended:true}));
+
+// cookies
+app.use(cookieparser());
 
 // userRoutes url localhost:PORT/api/user/
 app.use('/api/user',userRoutes);

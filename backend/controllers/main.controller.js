@@ -1,3 +1,9 @@
+// import libraries
+import jsonwebtoken from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 // importing models
 import Code from '../models/code.model.js'
 
@@ -45,5 +51,18 @@ export const serverFile = (file_address) => async(req,res)=>{
 }
 
 export const profile = async (req,res)=>{
-    return res.sendFile(path.join(__dirname,'../../static','profile.html'));
+    let token = req.cookies.token;
+    if(token){
+        try {
+            let verified = jsonwebtoken.verify(token,process.env.SECRET);
+            if(verified){
+                return res.sendFile(path.join(__dirname,'../../static','profile.html'));
+            }
+        } catch (error) {
+            console.error(error.message)
+            return res.redirect('/login');
+        }
+    }else{
+        return res.redirect('/login')
+    }
 }

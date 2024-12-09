@@ -33,9 +33,14 @@ export const getCodes = async(req,res)=>{
 
 export const getCodesOwner = async(req,res)=>{
     let cookies = req.cookies;
+    let filter = {};
 
-    let verified = await authenticate(cookies.token);
-    let filter = {owner:verified.owner};
+    let auth = await authenticate(cookies.token);
+    if(auth.success){
+        filter = {owner:auth.owner};
+    }else{
+        return res.status(401).json({success:false,message:"bad token"});
+    }
 
     try {
         
@@ -99,11 +104,12 @@ export const assignCode = async(req,res)=>{
 // controller for '/delete' (delete a code)
 // (value,owner,password)=>(deletes the code if authenticated else gives suitable error)
 export const deleteCode = async(req,res)=>{
+
     // get value, owner, password from user input
     let input = req.body;
     
     // validate the input
-    let validation = await validateCode(input,["value","owner","password"]);
+    let validation = await validateCode(input,["value"]);
     if(validation.error){
         return res.status(400).json({success:false,message:validation.message});
     }
@@ -116,9 +122,9 @@ export const deleteCode = async(req,res)=>{
         }
     
         // authenticating user for assigning code
-        const authenticated = await bcrypt_auth(input.owner,input.password);
+        const authenticated = await authenticate(req.cookies.token);
         if(!authenticated){
-            return res.status(401).json({success:false,message:"wrong username/password"});
+            return res.status(401).json({success:false,message:"bad token"});
         }    
     
     

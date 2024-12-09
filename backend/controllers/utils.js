@@ -52,7 +52,7 @@ export const validateUser = async(input,required_fields)=>{
     
     // checking if all fields are inputted
     for (let field of required_fields){
-        if(!(input[field] != null && input[field] != undefined)){
+        if(input[field] === null || input[field] === undefined || input[field] === ""){
             return {error:true,message:`enter ${field} field`};
         }
     }

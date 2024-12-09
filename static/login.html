@@ -6,7 +6,7 @@
     <link href="static/output.css" rel="stylesheet">
     <title>N_shortner</title>
 </head>
-<body class="text-red-700 flex flex-col items-center">
+<body class="text-red-700 flex flex-col items-center text-2xl">
     <div id="nav" class="flex items-center justify-between w-1/2 m-auto">
         <a href="/" id="home">home</a>
         <a href="/profile" id="profile">profile</a>
@@ -41,11 +41,12 @@
         .then((data)=>{
             data.json()
             .then((j_data)=>{
-                console.log(j_data);
+                // console.log(j_data);
                 if(j_data.success){
                     // save jwt token
-                    document.cookie = `username=${username}`;
-                    document.cookie = `password=${password}`;
+                    document.cookie = `token=${j_data.token}`;
+                    // redirect
+                    window.location.replace('/profile')
                 }
             })
         })

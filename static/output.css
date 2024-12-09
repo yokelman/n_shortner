@@ -591,16 +591,12 @@ video {
   min-height: 25vh;
 }
 
-.w-1\/6 {
-  width: 16.666667%;
+.w-1\/2 {
+  width: 50%;
 }
 
 .w-full {
   width: 100%;
-}
-
-.w-1\/2 {
-  width: 50%;
 }
 
 .flex-row {
@@ -673,9 +669,5 @@ video {
 @media (min-width: 1024px) {
   .lg\:w-1\/4 {
     width: 25%;
-  }
-
-  .lg\:w-1\/6 {
-    width: 16.666667%;
   }
 }

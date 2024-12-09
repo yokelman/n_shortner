@@ -43,6 +43,7 @@
             .then((j_data)=>{
                 console.log(j_data);
                 if(j_data.success){
+                    // save jwt token
                     document.cookie = `username=${username}`;
                     document.cookie = `password=${password}`;
                 }

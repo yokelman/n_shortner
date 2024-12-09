@@ -1,6 +1,7 @@
 // importing LIBRARIES
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
+import jsonwebtoken from 'jsonwebtoken';
 
 // importing UTILITIES
 import { find_docs, authenticate, validateUser } from './utils.js';
@@ -64,8 +65,8 @@ export const registerUser = async (req,res)=>{
         
         input.password = await bcrypt.hash(input.password, salt); //HASHING PASSWORD
         const saved_user = await User.create({username:input.username,password:input.password});
-            
-        return res.status(201).json({ success: true, data: saved_user });
+        const token = jsonwebtoken.sign({username:input.username,password:input.password},process.env.SECRET);
+        return res.status(201).json({ success: true, data: saved_user, token:token });
     }
     catch (error) {
         console.error(error.message);
@@ -95,7 +96,8 @@ export const loginUser = async (req, res) => {
         }
 
         if (authenticated_user) {
-            return res.status(200).json({ success: true, message: "you are logged in" }); // if password is correct log in
+            const token = jsonwebtoken.sign({username:input.username,password:input.password},process.env.SECRET);
+            return res.status(200).json({ success: true, message: "you are logged in", token:token }); // if password is correct log in
         }
 
         return res.status(401).json({ success: false, message: "wrong username or password" }); // otherwise show wrong username/pass

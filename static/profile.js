@@ -22,6 +22,7 @@ fetch("/api/code/owner", { method: "POST", headers: { "Content-Type": "applicati
                 else {
                     create_code_elems(j_data.codes);
                     document.getElementById('loading').innerText = "YOUR CODES";
+                    document.getElementById('')
                 }
             })
     });
@@ -44,7 +45,7 @@ function create_code_elems(codes) {
                     headers: {
                         "Content-Type": "application/json", // Specify the content type
                     },
-                    body: JSON.stringify({ value: element.value, owner: owner, password: pass })
+                    body: JSON.stringify({ value: element.value })
                 });
                 const json = await response.json();
                 if (json.success) {
@@ -64,21 +65,6 @@ function create_code_elems(codes) {
         your_codes.appendChild(code_div);
     });
 }
-
-
-let loading = document.getElementById('loading');
-loading.innerText = "login to continue";
-// let msg = document.createElement("span");
-// msg.innerText = "login to continue";
-// loading.appendChild(msg);
-
-let log_redirect = document.createElement("a");
-log_redirect.innerText = "Login";
-log_redirect.href = "/login"
-
-document.getElementById("your_codes").appendChild(log_redirect);
-
-
 
 document.getElementById("submit_btn").addEventListener("click", () => {
 

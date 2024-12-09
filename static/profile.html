@@ -7,38 +7,40 @@
     <link rel="stylesheet" href="/static/output.css">
 </head>
 <body class="text-red-700 flex flex-col items-center">
-    <div id="your_codes" class="mt-4"><span id="loading" class="underline">LOADING</span></div>
-    <div id="assign_code" class="mt-4">
+    <div id="nav" class="flex items-center justify-between w-1/2 m-auto">
+        <a href="/" id="home">home</a>
+        <a href="/profile" id="profile">profile</a>
+    </div>
+    <div class="mt-4 flex flex-col underline items-center" id="your_codes"><span id="loading">LOADING</span></div>
+    <div class="flex flex-col mt-2">
         <span class="mt-4">Assign codes</span>
-        <form action="/api/code/assign" method="post" class="flex flex-col mt-2" autocomplete="off" target="_blank">
-            <label for="owner">owner</label>
-            <input type="text" name="owner" id="owner" class="border border-black">
+        <label for="owner">owner</label>
+        <input type="text" name="owner" id="owner" class="border border-black">
 
-            <label for="password">password</label>
-            <input type="password" name="password" id="password" class="border border-black">
+        <label for="password">password</label>
+        <input type="password" name="password" id="password" class="border border-black">
 
-            <label for="value">value</label>
-            <input type="number" name="value" id="value" class="border border-black">
+        <label for="value">value</label>
+        <input type="number" name="value" id="value" class="border border-black">
 
-            <label for="redirect">redirect</label>
-            <input type="text" name="redirect" id="redirect" class="border border-black">
+        <label for="redirect">redirect</label>
+        <input type="text" name="redirect" id="redirect" class="border border-black">
 
-            <label for="note">note</label>
-            <input type="text" name="note" id="note" class="border border-black">
+        <label for="note">note</label>
+        <input type="text" name="note" id="note" class="border border-black">
 
-            <label for="public" class="flex justify-between">
-                <span>public</span>
-                <input type="radio" name="visibility" id="public" class="border border-black" value="public">
-            </label>
-            
-            <label for="private" class="flex justify-between">
-                <span>private</span>
-                <input type="radio" name="visibility" id="private" class="border border-black" value="private">
-            </label>
-            
-            <input type="submit" value="Assign code!!" class="bg-black">
+        <label for="public" class="flex justify-between">
+            <span>public</span>
+            <input type="radio" name="visibility" id="public" class="border border-black" value="public" checked>
+        </label>
+        
+        <label for="private" class="flex justify-between">
+            <span>private</span>
+            <input type="radio" name="visibility" id="private" class="border border-black" value="private">
+        </label>
+        
+        <button id="submit_btn" class="border border-black mt-2">Assign code</button>
 
-        </form>
     </div>
 </body>
 <script src="/static/profile.js"></script>

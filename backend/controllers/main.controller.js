@@ -43,3 +43,7 @@ export const redirectCode = async (req,res)=>{
 export const serverFile = (file_address) => async(req,res)=>{
     return res.sendFile(path.join(__dirname,'../../static',file_address));
 }
+
+export const profile = async (req,res)=>{
+    return res.sendFile(path.join(__dirname,'../../static','profile.html'));
+}

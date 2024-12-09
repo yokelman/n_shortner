@@ -39,7 +39,7 @@ export const authenticate = async(token)=>{
     try {
         let verified = jsonwebtoken.verify(token,process.env.SECRET);
         if(verified){
-            return {success:true,message:"authenticated"};
+            return {success:true,message:"authenticated",owner:verified.username};
         }else{
             return {success:false,message:"not authenticated"};
         }

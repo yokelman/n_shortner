@@ -2,7 +2,7 @@
 import Code from '../models/code.model.js';
 
 // importing UTILITY
-import { bcrypt_auth, find_docs, validateCode } from './utils.js';
+import { bcrypt_auth, find_docs, validateCode, authenticate } from './utils.js';
 
 // controller for '/' (get codes for given owner)
 // (owner of the codes needed) => (all codes of "owner" in json format)
@@ -10,27 +10,33 @@ export const getCodes = async(req,res)=>{
     
     // setting the filter to find codes
     let filter = {visibility:"public"};
-
-    // get the "owner" from input data
-    let {owner} = req.params;
     
-    // find the codes of the specific owner if path is '/owner'
-    if(owner){
-        let {password} = req.body;
-        if(!password){
-            return res.status(400).json({success:false,message:"please enter password"});
-        }
-        filter = {owner:owner};
-
-        // authenticating user
-        const authenticated = await bcrypt_auth(owner,password);
-        if(authenticated === null){
+    try {
+        
+        let codes = await find_docs(filter,Code);
+        // check for internal server error
+        if(codes === null){
             return res.status(500).json({success:false,message:"internal server error"});
         }
-        if(!authenticated){
-            return res.status(401).json({success:false,message:"wrong username/password"});
+        // check if no codes found
+        if(codes.length === 0){
+            return res.status(404).json({success:false,message:"no codes found",code:404});
         }
+        
+        // return the codes found
+        return res.status(200).json({success: true,codes:codes});
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({success:false,message:"something went wrong"});
     }
+}
+
+export const getCodesOwner = async(req,res)=>{
+    let cookies = req.cookies;
+
+    let verified = await authenticate(cookies.token);
+    let filter = {owner:verified.owner};
+
     try {
         
         let codes = await find_docs(filter,Code);

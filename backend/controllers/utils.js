@@ -1,5 +1,9 @@
 // importing libraries
 import bcrypt from 'bcrypt';
+import jsonwebtoken from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 // importing mongoose models
 import User from '../models/user.model.js';
@@ -16,7 +20,7 @@ export const find_docs = async (filter,Model)=> {
 };
 
 // (username,password) => (if password is correct return the user, else return false)
-export const authenticate = async(username,password)=>{
+export const bcrypt_auth = async(username,password)=>{
     try {
         const match_user = await find_docs({username: username},User);
         if (match_user[0] && await bcrypt.compare(password, match_user[0].password)) {
@@ -31,6 +35,20 @@ export const authenticate = async(username,password)=>{
     }
 };
 
+export const authenticate = async(token)=>{
+    try {
+        let verified = jsonwebtoken.verify(token,process.env.SECRET);
+        if(verified){
+            return {success:true,message:"authenticated"};
+        }else{
+            return {success:false,message:"not authenticated"};
+        }
+    } catch (error) {
+        console.error(error.message);
+        return {success:false,message:"not authenticated"};
+    }
+
+};
 // (value,owner,password,redirect) => (if fields are valid returns {error:false}, else return {error:true,message})
 export const validateCode = async(input,required_fields)=>{
     // checking if all fields are inputted

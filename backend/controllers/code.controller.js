@@ -2,7 +2,7 @@
 import Code from '../models/code.model.js';
 
 // importing UTILITY
-import { authenticate, find_docs, validateCode } from './utils.js';
+import { bcrypt_auth, find_docs, validateCode } from './utils.js';
 
 // controller for '/' (get codes for given owner)
 // (owner of the codes needed) => (all codes of "owner" in json format)
@@ -23,7 +23,7 @@ export const getCodes = async(req,res)=>{
         filter = {owner:owner};
 
         // authenticating user
-        const authenticated = await authenticate(owner,password);
+        const authenticated = await bcrypt_auth(owner,password);
         if(authenticated === null){
             return res.status(500).json({success:false,message:"internal server error"});
         }
@@ -73,7 +73,7 @@ export const assignCode = async(req,res)=>{
         }
 
         // authenticating user for assigning code
-        const authenticated = await authenticate(input.owner,input.password);
+        const authenticated = await bcrypt_auth(input.owner,input.password);
         if(authenticated === null){
             return res.status(500).json({success:false,message:"internal server error"});
         }
@@ -110,7 +110,7 @@ export const deleteCode = async(req,res)=>{
         }
     
         // authenticating user for assigning code
-        const authenticated = await authenticate(input.owner,input.password);
+        const authenticated = await bcrypt_auth(input.owner,input.password);
         if(!authenticated){
             return res.status(401).json({success:false,message:"wrong username/password"});
         }    

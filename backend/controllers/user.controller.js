@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import jsonwebtoken from 'jsonwebtoken';
 
 // importing UTILITIES
-import { find_docs, authenticate, validateUser } from './utils.js';
+import { find_docs, bcrypt_auth, validateUser } from './utils.js';
 
 // read ENVIRONMENT variables
 dotenv.config();
@@ -89,7 +89,7 @@ export const loginUser = async (req, res) => {
 
     // authenticate user
     try {
-        let authenticated_user = await authenticate(input.username,input.password);
+        let authenticated_user = await bcrypt_auth(input.username,input.password);
 
         if(authenticated_user === null){
             return res.status(500).json({success:false,message:"internal server error"});
@@ -121,7 +121,7 @@ export const changePass = async (req, res) => {
 
     // authenticate user
     try {
-        let authenticated_user = await authenticate(input.username,input.password);
+        let authenticated_user = await bcrypt_auth(input.username,input.password);
         
         if(authenticated_user === null){
             return res.status(500).json({success:false,message:"internal server error"});
@@ -153,7 +153,7 @@ export const deleteUser = async (req, res) => {
 
     try {
         // authenticate user
-        let authenticated_user = await authenticate(input.username,input.password);
+        let authenticated_user = await bcrypt_auth(input.username,input.password);
         if(authenticated_user === null){
             return res.status(500).json({success:false,message:"internal server error"});
         }

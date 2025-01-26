@@ -4,6 +4,7 @@
   "description": "starting of the project",
   "main": "index.js",
   "type": "module",
+  "engines": {"node": "22.x"},
   "scripts": {
     "start":"node backend/server.js",
     "dev": "nodemon backend/server.js",

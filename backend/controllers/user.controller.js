@@ -20,7 +20,7 @@ import Code from "../models/code.model.js";
 
 // controller for '/' (to get all users)
 // () => (all saved users)
-export const getUsers = async(req,res)=>{
+export const getUsers = async(req,res,next)=>{
     // get all users saved
     try {
         let users = await find_docs({},User);
@@ -33,14 +33,13 @@ export const getUsers = async(req,res)=>{
         // return saved "users"
         return res.status(200).json({success:true,users:users});
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({success:false,message:"something went wrong"});
+        next(error);
     }
 };
 
 // controller for '/register'
 // (username, password) => (if username is not taken then register user and return saved user, else return the error)
-export const registerUser = async (req,res)=>{
+export const registerUser = async (req,res,next)=>{
     // get username and password from input
     let input = req.body;
 
@@ -69,15 +68,14 @@ export const registerUser = async (req,res)=>{
         return res.status(201).json({ success: true, data: saved_user, token:token });
     }
     catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ success: false, message: "something went wrong" });
+        next(error);
         
     }
 }
 
 // controller for '/login'
 // (username, password) => (if authenticated return "true", else "false")
-export const loginUser = async (req, res) => {
+export const loginUser = async (req,res,next) => {
     // get the username and password from input
     let input = req.body;
 
@@ -102,14 +100,13 @@ export const loginUser = async (req, res) => {
 
         return res.status(401).json({ success: false, message: "wrong username or password" }); // otherwise show wrong username/pass
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({success:false,message:"something went wrong"});
+        next(error);
     }
 };
 
 // controller for '/changepass'
 // (username, password, new_pass) => (if authenticated update password and return "true", else return "false")
-export const changePass = async (req, res) => {
+export const changePass = async (req,res,next) => {
     // get username, password and new_pass from input
     let input = req.body;
 
@@ -134,14 +131,13 @@ export const changePass = async (req, res) => {
         }
         return res.status(401).json({ success: false, message: "wrong username or password" });
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({success:false,message:"something went wrong"});
+        next(error);
     }
 };
 
 // controller for '/delete'
 // (username, password) => (if authenticated delete user and its codes and return "true", else return "false")
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req,res,next) => {
     // get username and password from input
     let input = req.body;
 
@@ -167,8 +163,7 @@ export const deleteUser = async (req, res) => {
         return res.status(401).json({ success: false, message: "wrong username or password" });
         
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({success:false,message:"something went wrong"});
+        next(error);
     }
 
 };

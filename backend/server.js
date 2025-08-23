@@ -18,6 +18,9 @@ import mainRoutes from './routes/main.routes.js';
 // importing mongoose connection function to connect to database
 import connectDb from "./config_db.js";
 
+// importing the error handler
+import errorHandler from "./middleware/errorHandler.js";
+
 // port for listening requests through express
 const PORT = process.env.PORT; 
 
@@ -44,6 +47,8 @@ app.use('/',mainRoutes);
 
 // serving static files
 app.use('/static',express.static(path.join(__dirname, '../static')));
+
+app.use(errorHandler);
 
 // listen at PORT
 app.listen(PORT, () => {

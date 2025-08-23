@@ -36,8 +36,7 @@ export const redirectCode = async (req,res)=>{
         // redirect if everything else is checked
         return res.redirect(found_code[0].redirect);
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({success:false,message:"something went wrong"});
+        next(error);
     }
 }
 
@@ -45,7 +44,7 @@ export const serverFile = (file_address) => async(req,res)=>{
     return res.sendFile(path.join(__dirname,'../../static',file_address));
 }
 
-export const profile = async (req,res)=>{
+export const profile = async (req,res,next)=>{
     let token = req.cookies.token;
     if(token){
         try {
@@ -54,7 +53,7 @@ export const profile = async (req,res)=>{
                 return res.sendFile(path.join(__dirname,'../../static','profile.html'));
             }
         } catch (error) {
-            console.error(error.message)
+            next(error);
             return res.redirect('/login');
         }
     }else{

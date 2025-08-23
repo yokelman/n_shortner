@@ -6,7 +6,7 @@ import { bcrypt_auth, find_docs, authenticate, validate } from './utils.js';
 
 // controller for '/' (get codes for given owner)
 // (owner of the codes needed) => (all codes of "owner" in json format)
-export const getCodes = async(req,res)=>{
+export const getCodes = async(req,res,next)=>{
     
     // setting the filter to find codes
     let filter = {visibility:"public"};
@@ -26,12 +26,11 @@ export const getCodes = async(req,res)=>{
         // return the codes found
         return res.status(200).json({success: true,codes:codes});
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({success:false,message:"something went wrong"});
+        next(error);
     }
 }
 
-export const getCodesOwner = async(req,res)=>{
+export const getCodesOwner = async(req,res,next)=>{
     let cookies = req.cookies;
     let filter = {};
 
@@ -57,14 +56,13 @@ export const getCodesOwner = async(req,res)=>{
         // return the codes found
         return res.status(200).json({success: true,codes:codes});
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({success:false,message:"something went wrong"});
+        next(error);
     }
 }
 
 // controller for '/assign' (assign a code to a user)
 // (value of the code, owner, password, where to redirect) => (authenticate and validate if yes then assign the code for given owner)
-export const assignCode = async(req,res)=>{
+export const assignCode = async(req,res,next)=>{
 
     // get value, owner, password, redirect from user input
     let input = req.body;
@@ -77,11 +75,6 @@ export const assignCode = async(req,res)=>{
 
     
     try {
-        // checking for dupes
-        const code_exists = await find_docs({_id:input.value},Code);
-        if(code_exists[0]){
-            return res.status(409).json({success:false,message:"value is already taken"});
-        }
 
         // authenticating user for assigning code
         const authenticated = await bcrypt_auth(input.owner,input.password);
@@ -96,14 +89,13 @@ export const assignCode = async(req,res)=>{
         const saved_code = await Code.create({owner:input.owner,_id:input.value,redirect:input.redirect,visibility:input.visibility,note:input.note});
         return res.status(201).json({success:true,code:saved_code});
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({success:false,message:"something went wrong"});
+        next(error);
     }
 }
 
 // controller for '/delete' (delete a code)
 // (value,owner,password)=>(deletes the code if authenticated else gives suitable error)
-export const deleteCode = async(req,res)=>{
+export const deleteCode = async(req,res,next)=>{
 
     // get value, owner, password from user input
     let input = req.body;
@@ -132,7 +124,6 @@ export const deleteCode = async(req,res)=>{
         const deleted_code = await Code.deleteOne({_id:input.value});
         return res.status(200).json({success:true,code:deleted_code});
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({success:false,messasge:"something went wrong"});
+        next(error);
     }
 }

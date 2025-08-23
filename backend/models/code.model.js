@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 
 // code schema => {owner,value,redirect == all required}
 const CodeSchema = mongoose.Schema({
-    owner:{
-        type: String,
+    _id:{
+        type: Number,
         required: true
     },
-    value:{
-        type: Number,
+    owner:{
+        type: String,
         required: true
     },
     redirect:{

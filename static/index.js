@@ -9,7 +9,7 @@ fetch('/api/code',{method:"POST",headers: {"Content-Type": "application/json"}})
 function create_code_elems(codes) {
     const codes_container = document.getElementById('codes_container');
     codes.forEach(element => {
-        let padded_val = element.value.toString().padStart(6, '0');
+        let padded_val = element._id.toString().padStart(6, '0');
 
         let code_div = document.createElement('div');
         let value = document.createElement('a');

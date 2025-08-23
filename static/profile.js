@@ -30,7 +30,7 @@ fetch("/api/code/owner", { method: "POST", headers: { "Content-Type": "applicati
 function create_code_elems(codes) {
     const your_codes = document.getElementById('your_codes');
     codes.forEach(element => {
-        let padded_val = element.value.toString().padStart(6, '0');
+        let padded_val = element._id.toString().padStart(6, '0');
         let code_div = document.createElement('div');
         let note = document.createElement('span');
         let del = document.createElement('a');
@@ -39,13 +39,13 @@ function create_code_elems(codes) {
         del.className = "ml-4";
         del.addEventListener('click', async () => {
             try {
-                // console.log({value:element.value,owner:owner,password:"test"})
+                // console.log({value:element._id,owner:owner,password:"test"})
                 const response = await fetch("/api/code/delete", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json", // Specify the content type
                     },
-                    body: JSON.stringify({ value: element.value })
+                    body: JSON.stringify({ value: element._id })
                 });
                 const json = await response.json();
                 if (json.success) {

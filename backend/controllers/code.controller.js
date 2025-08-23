@@ -2,7 +2,7 @@
 import Code from '../models/code.model.js';
 
 // importing UTILITY
-import { bcrypt_auth, find_docs, validateCode, authenticate } from './utils.js';
+import { bcrypt_auth, find_docs, authenticate, validate } from './utils.js';
 
 // controller for '/' (get codes for given owner)
 // (owner of the codes needed) => (all codes of "owner" in json format)
@@ -70,7 +70,7 @@ export const assignCode = async(req,res)=>{
     let input = req.body;
     
     // validate the input
-    let validation = await validateCode(input,["value","owner","redirect","password","visibility","note"]);
+    let validation = await validate(input,["value","owner","redirect","password","visibility","note"]);
     if(validation.error){
         return res.status(400).json({success:false,message:validation.message});
     }
@@ -78,7 +78,7 @@ export const assignCode = async(req,res)=>{
     
     try {
         // checking for dupes
-        const code_exists = await find_docs({value:input.value},Code);
+        const code_exists = await find_docs({_id:input.value},Code);
         if(code_exists[0]){
             return res.status(409).json({success:false,message:"value is already taken"});
         }
@@ -93,7 +93,7 @@ export const assignCode = async(req,res)=>{
         }
     
         // assign the code to the given owner
-        const saved_code = await Code.create({owner:input.owner,value:input.value,redirect:input.redirect,visibility:input.visibility,note:input.note});
+        const saved_code = await Code.create({owner:input.owner,_id:input.value,redirect:input.redirect,visibility:input.visibility,note:input.note});
         return res.status(201).json({success:true,code:saved_code});
     } catch (error) {
         console.error(error.message);
@@ -109,14 +109,14 @@ export const deleteCode = async(req,res)=>{
     let input = req.body;
     
     // validate the input
-    let validation = await validateCode(input,["value"]);
+    let validation = await validate(input,["value"]);
     if(validation.error){
         return res.status(400).json({success:false,message:validation.message});
     }
 
     try {
         // CHECK IF VALUE EXISTS OR NOT IF IT DOESNT EXIST THEN DONT DELETE
-        const exists = await find_docs({value:input.value},Code);
+        const exists = await find_docs({_id:input.value},Code);
         if(!exists[0]){
             return res.status(404).json({success:false,message:"code doesnt exist with that value"});
         }
@@ -129,7 +129,7 @@ export const deleteCode = async(req,res)=>{
     
     
         // delete the code
-        const deleted_code = await Code.deleteOne({value:input.value});
+        const deleted_code = await Code.deleteOne({_id:input.value});
         return res.status(200).json({success:true,code:deleted_code});
     } catch (error) {
         console.error(error.message);

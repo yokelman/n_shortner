@@ -49,24 +49,9 @@ export const authenticate = async(token)=>{
     }
 
 };
-// (value,owner,password,redirect) => (if fields are valid returns {error:false}, else return {error:true,message})
-export const validateCode = async(input,required_fields)=>{
-    // checking if all fields are inputted
-    // console.log(required_fields)
-    for (let field of required_fields){
-        if(input[field] === null || input[field] === undefined || input[field] === ""){
-            return {error:true,message:`enter ${field} fields`};
-        }
-    }
-    // checking if value is 6 digit
-    if(input.value>999999 || input.value<0){
-        return {error:true,message:"enter value b/w 0 and 999999"};
-    }
-    return {error:false}
-}
 
 // (username,password, new_pass) => (check if given fields are valid then return {error:false}, if not return {error:true,message})
-export const validateUser = async(input,required_fields)=>{
+export const validate = async(input,required_fields)=>{
     
     // checking if all fields are inputted
     for (let field of required_fields){

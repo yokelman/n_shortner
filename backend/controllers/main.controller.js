@@ -21,15 +21,10 @@ import { find_docs } from './utils.js';
 export const redirectCode = async (req,res)=>{
     // get the code from url
     let {code} = req.params;
-    
-    // check if its a valid 6 digit code
-    if(!/^\d{6}$/.test(code)){
-        return res.status(400).json({success:false,message:"enter a valid 6 digit code"});
-    }
 
     try {
         // find the code from database
-        const found_code = await find_docs({value:code},Code);
+        const found_code = await find_docs({_id:code},Code);
         // if internal server error
         if(found_code == null){
             return res.status(500).json({success:false,message:"internal server error occurred"});

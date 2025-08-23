@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import jsonwebtoken from 'jsonwebtoken';
 
 // importing UTILITIES
-import { find_docs, bcrypt_auth, validateUser } from './utils.js';
+import { find_docs, bcrypt_auth, validate } from './utils.js';
 
 // read ENVIRONMENT variables
 dotenv.config();
@@ -45,7 +45,7 @@ export const registerUser = async (req,res)=>{
     let input = req.body;
 
     // validate input
-    let validation = await validateUser(input,["username","password"]);
+    let validation = await validate(input,["username","password"]);
     if(validation.error){
         return res.status(400).json({success:false,message:validation.message});
     }
@@ -82,7 +82,7 @@ export const loginUser = async (req, res) => {
     let input = req.body;
 
     // validate input
-    let validation = await validateUser(input,["username","password"]);
+    let validation = await validate(input,["username","password"]);
     if(validation.error){
         return res.status(400).json({success:false,message:validation.message});
     }
@@ -114,7 +114,7 @@ export const changePass = async (req, res) => {
     let input = req.body;
 
     // validate input
-    let validation = await validateUser(input,["username","password","new_pass"]);
+    let validation = await validate(input,["username","password","new_pass"]);
     if(validation.error){
         return res.status(400).json({success:false,message:validation.message});
     }
@@ -146,7 +146,7 @@ export const deleteUser = async (req, res) => {
     let input = req.body;
 
     // validate input
-    let validation = await validateUser(input,["username","password"]);
+    let validation = await validate(input,["username","password"]);
     if(validation.error){
         return res.status(400).json({success:false,message:validation.message});
     }

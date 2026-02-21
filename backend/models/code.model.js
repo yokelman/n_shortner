@@ -3,30 +3,30 @@ import mongoose from "mongoose";
 
 // code schema => {owner,value,redirect == all required}
 const CodeSchema = mongoose.Schema({
-    _id:{
+    _id: {
         type: Number,
         required: true
     },
-    owner:{
+    owner: {
         type: String,
         required: true
     },
-    redirect:{
+    redirect: {
         type: String,
         required: true
     },
-    visibility:{
+    note: {
         type: String,
         required: true
     },
-    note:{
+    preview: {
         type: String,
-        required: true
+        required: false
     }
 });
 
 // mongoose model
-const Code = mongoose.model("Code",CodeSchema);
+const Code = mongoose.model("Code", CodeSchema);
 
 // export the model
 export default Code;

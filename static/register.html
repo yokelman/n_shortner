@@ -1,55 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="static/output.css" rel="stylesheet">
     <title>N_shortner</title>
 </head>
-<body class="text-red-700 flex flex-col items-center text-2xl">
-    <div id="nav" class="flex items-center justify-between w-1/2 m-auto">
-        <a href="/" id="home">home</a>
-        <a href="/profile" id="profile">profile</a>
-    </div>
-    <span>register</span>
-    <div class="flex flex-col mt-8">
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username" class="border border-black">
 
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" class="border border-black">
-        
-        <button class="border border-black mt-2" id="submit_btn">register!!!</button>
-
+<body class="bg-gray-900 text-gray-200 flex flex-col items-center min-h-screen text-lg font-sans pt-10">
+    <div id="nav" class="flex items-center justify-between w-full max-w-md mx-auto mb-8 pb-4 border-b border-gray-700">
+        <a href="/" id="home" class="hover:text-red-400 transition-colors duration-200">home</a>
+        <a href="/profile" id="profile" class="hover:text-red-400 transition-colors duration-200">profile</a>
     </div>
-    <div id="login_redirect" class="mt-8">Already have an account? <a href="/login">Login</a></div>
+
+    <h1 class="text-3xl font-bold mb-6 text-red-500 tracking-wide">REGISTER</h1>
+
+    <div class="flex flex-col w-full max-w-xs bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+        <div id="error_msg"
+            class="hidden text-red-400 bg-red-900/40 border border-red-500/50 p-3 rounded mb-4 text-sm font-medium text-center">
+        </div>
+
+        <label for="username" class="mb-2 text-sm text-gray-400">Username</label>
+        <input type="text" name="username" id="username"
+            class="mb-4 bg-gray-900 border border-gray-600 rounded p-2 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all text-white">
+
+        <label for="password" class="mb-2 text-sm text-gray-400">Password</label>
+        <input type="password" name="password" id="password"
+            class="mb-6 bg-gray-900 border border-gray-600 rounded p-2 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all text-white">
+
+        <button
+            class="bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold rounded py-2 px-4 transition-colors duration-200 flex justify-center items-center h-11"
+            id="submit_btn">
+            <span id="btn_text">REGISTER</span>
+            <svg id="btn_spinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+            </svg>
+        </button>
+    </div>
+
+    <div id="login_redirect" class="mt-8 text-sm text-gray-400">Already have an account? <a href="/login"
+            class="text-red-400 hover:text-red-300 underline underline-offset-2">Login</a></div>
 </body>
 <script>
-    document.getElementById("submit_btn").addEventListener("click",(event)=>{
-        
+    document.getElementById("submit_btn").addEventListener("click", (event) => {
+
+        const submitBtn = document.getElementById("submit_btn");
+        const btnText = document.getElementById("btn_text");
+        const btnSpinner = document.getElementById("btn_spinner");
+        const errorMsg = document.getElementById("error_msg");
+
+        // UI Loading state on
+        submitBtn.disabled = true;
+        btnText.classList.add("hidden");
+        btnSpinner.classList.remove("hidden");
+        errorMsg.classList.add("hidden");
+
         let username = document.getElementById("username").value;
         let password = document.getElementById("password").value;
-        
-        fetch("/api/user/register",{
-            body:JSON.stringify({
-                username:username,
-                password:password
+
+        fetch("/api/user/register", {
+            body: JSON.stringify({
+                username: username,
+                password: password
             }),
-            method:"POST",
-            headers: {"Content-Type": "application/json"}
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
         })
-        .then((data)=>{
-            data.json()
-            .then((j_data)=>{
-                // console.log(j_data);
-                if(j_data.success){
-                    // save jwt token
-                    document.cookie = `token=${j_data.token}`;
-                    // redirect
-                    window.location.replace('/profile')
-                }
+            .then((data) => {
+                data.json()
+                    .then((j_data) => {
+                        // UI Loading state off
+                        submitBtn.disabled = false;
+                        btnText.classList.remove("hidden");
+                        btnSpinner.classList.add("hidden");
+
+                        if (j_data.success) {
+                            // save jwt token
+                            document.cookie = `token=${j_data.token}; path=/;`;
+                            // redirect
+                            window.location.replace('/profile')
+                        } else {
+                            // show error
+                            errorMsg.innerText = j_data.message || "Registration failed";
+                            errorMsg.classList.remove("hidden");
+                        }
+                    })
+                    .catch(() => {
+                        submitBtn.disabled = false;
+                        btnText.classList.remove("hidden");
+                        btnSpinner.classList.add("hidden");
+                        errorMsg.innerText = "Network Error Parsing JSON";
+                        errorMsg.classList.remove("hidden");
+                    })
             })
-        })
+            .catch(() => {
+                submitBtn.disabled = false;
+                btnText.classList.remove("hidden");
+                btnSpinner.classList.add("hidden");
+                errorMsg.innerText = "Network Connection Error";
+                errorMsg.classList.remove("hidden");
+            });
     })
 </script>
+
 </html>

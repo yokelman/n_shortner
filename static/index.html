@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="static/output.css" rel="stylesheet">
     <title>N_shortner</title>
 </head>
-<body class="text-red-700 text-2xl">
-    <div id="nav" class="flex items-center justify-between w-1/2 m-auto">
-        <a href="/" id="home">home</a>
-        <a href="/profile" id="profile">profile</a>
+
+<body class="bg-gray-900 text-gray-200 min-h-screen text-lg font-sans pt-10 px-4">
+    <div id="nav" class="flex items-center justify-between w-full max-w-6xl mx-auto mb-8 pb-4 border-b border-gray-700">
+        <a href="/" id="home" class="text-red-500 font-semibold tracking-wide border-b-2 border-red-500 pb-1">Home</a>
+        <a href="/profile" id="profile"
+            class="hover:text-red-400 font-semibold transition-colors duration-200 tracking-wide">Profile</a>
     </div>
+
     <!-- view all codes with previews -->
-    <div id="codes_container" class="flex flex-row text-center flex-wrap"></div>
+    <div id="codes_container" class="flex flex-row flex-wrap gap-6 justify-center max-w-6xl mx-auto"></div>
 </body>
 <script src="/static/index.js"></script>
+
 </html>
